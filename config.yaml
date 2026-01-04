@@ -1,0 +1,89 @@
+# Konfigurační soubor pro automatické nasazení Windows Server 2022
+
+vm:
+  # Název virtuálního stroje
+  name: "WinServer2022"
+  
+  # Cesta k Windows Server ISO souboru
+  iso_path: "~/iso/win_server_2022.iso"
+  
+  # Cesta k VirtIO drivers ISO (pro Windows virtio disk a network ovladače)
+  virtio_iso_path: "~/iso/virtio-win.iso"
+  
+  # Pracovní adresář pro VM soubory (disk, logy, scripty)
+  work_dir: "~/vm_deployments"
+  
+  # Velikost virtuálního disku
+  disk_size: "60G"
+  
+  # Paměť RAM
+  memory: "8G"
+  
+  # Počet CPU jader
+  cpus: 8
+  
+  # VNC port (výsledný port bude 5900 + tato hodnota, např. 0 = 5900, 1 = 5901)
+  vnc_port: 0
+  
+  # Síťový režim: 'nat' (izolovaná 10.0.2.x síť s port forward) nebo 'bridge' (přímé připojení do hostitelské sítě)
+  network_mode: "nat"  # Změňte na "bridge" pro přímé síťové připojení
+  
+  # Bridge interface (použije se pouze při network_mode: bridge)
+  bridge_interface: "br0"  
+
+  # Port forwarding (použije se pouze při network_mode: nat)
+  # Můžete přidat více pravidel, pokud potřebujete přesměrovat další porty
+  port_forwards:
+    - host: 8080    # Port na Ubuntu hostu
+      guest: 80     # Port ve Windows VM
+    - host: 8443
+      guest: 443
+
+  # RDP (Remote Desktop Protocol) konfigurace
+  rdp:
+    # Povolit Remote Desktop - umožňuje připojení přes RDP klienta
+    enabled: true
+    
+    # Port na Ubuntu hostu pro RDP přístup (standardní RDP port je 3389)
+    # RDP bude přístupný na localhost:3389 (nebo jiný zvolený port)
+    host_port: 3389
+
+windows:
+  # Jméno počítače ve Windows
+  computer_name: "WIN-SERVER"
+  
+  # Edice Windows Serveru k instalaci:
+  # "standard" - Windows Server Standard s GUI (Desktop Experience)
+  # "core" - Windows Server Standard Core (bez GUI, pouze příkazový řádek)
+  # "datacenter" - Windows Server Datacenter s GUI
+  # "datacenter-core" - Windows Server Datacenter Core (bez GUI)
+  windows_edition: "standard"
+  
+  # Heslo pro vestavěný účet Administrator
+  administrator_password: "Administrator123!"
+  
+  # Seznam uživatelů k vytvoření
+  users:
+    - username: "webadmin"
+      password: "WebAdmin123!"
+      description: "Web Administrator"
+      group: "Administrators"
+    
+    - username: "developer"
+      password: "Developer123!"
+      description: "Developer Account"
+      group: "Users"
+    
+    - username: "testuser"
+      password: "TestUser123!"
+      description: "Test User"
+      group: "Users"
+  
+  # Konfigurace webového projektu
+  web_project:
+    # Název projektu
+    name: "Demo Web Application"
+    
+    # Zdrojová složka s webovým projektem (html, css, js soubory)
+    # Pokud složka neexistuje, vytvoří se základní index.html
+    source_folder: "~/web_project"
